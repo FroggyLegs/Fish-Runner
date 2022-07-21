@@ -25,8 +25,8 @@ gameover = pygame.image.load("7.png")
 clock = pygame.time.Clock()
 
 # 玩家默认 (x,y) 坐标。
-x = 110
-y = 300
+fish_x = 110
+fish_y = 300
 # 玩家跳跃高度。
 jumpheight = 30
 # 玩家默认处于非跳跃动作。
@@ -54,7 +54,7 @@ while gamerunning:
         i=0
     i-=10
     # 根据 (x,y) 坐标显示玩家。
-    window.blit(fish, (x, y))
+    window.blit(fish, (fish_x, fish_y))
     # 让程序查看用户输入。
     for event in pygame.event.get(): 
         # KEYUP 查看玩家是否松开任何按键。
@@ -76,16 +76,16 @@ while gamerunning:
     # 若玩家处于跳跃状态。
     if isjump:
         # 玩家y轴方位的变化。
-        y -= jumpheight           
+        fish_y -= jumpheight
         # 跳跃高度随着时间推移而减小。
         jumpheight = jumpheight - 2
         # 若玩家达到原本最低高度。
-        if y == 300:
+        if fish_y == 300:
                 # 玩家不再处于跳跃状态
                 isjump = False
                 jumpheight = 30
         # creates time delay of 10ms
-    print(y)
+    print(fish_y)
     pygame.time.delay(10)
     pygame.display.update()
 
