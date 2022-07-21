@@ -69,6 +69,10 @@ while gamerunning:
                 # 按下空格键或者上方向键，触发跳跃状态。
                 if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                     isjump = True
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if not isjump:
+                if event.button == 1:
+                    isjump = True
         # 点击窗口右上端的 x 则退出游戏。
         if event.type == pygame.QUIT:
             sys.exit()
