@@ -16,9 +16,10 @@ background = pygame.transform.scale(background,(width, height))
 pygame.display.set_caption("Fish Runner")
 
 # 导入素材。
-obstacles = [pygame.image.load("2.png").convert(), pygame.image.load("3.png").convert(), pygame.image.load("4.png").convert(), pygame.image.load("5.png").convert()]
-fish = pygame.image.load("1.png").convert()
-gameover = pygame.image.load("7.png").convert()
+obstacles = [pygame.image.load("2.png"), pygame.image.load("3.png"), pygame.image.load("4.png"),
+             pygame.image.load("5.png")]
+fish = pygame.image.load("1.png")
+gameover = pygame.image.load("7.png")
 
 # 计时器
 clock = pygame.time.Clock()
@@ -75,7 +76,6 @@ while gamerunning:
     # 若玩家处于跳跃状态。
     if isjump:
         # 玩家y轴方位的变化。
-        print (y)
         y -= jumpheight           
         # 跳跃高度随着时间推移而减小。
         jumpheight = jumpheight - 2
@@ -85,6 +85,7 @@ while gamerunning:
                 isjump = False
                 jumpheight = 30
         # creates time delay of 10ms
+    print(y)
     pygame.time.delay(10)
     pygame.display.update()
 
