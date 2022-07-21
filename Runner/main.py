@@ -3,8 +3,8 @@ import sys
 import pygame
 
 # 定义背景的长宽，及方位。
-width = 960
-height = 480
+width = 1040
+height = 380
 i = 0
 
 # 生成背景及窗口
@@ -25,10 +25,10 @@ gameover = pygame.image.load("7.png")
 clock = pygame.time.Clock()
 
 # 玩家默认 (x,y) 坐标。
-fish_x = 110
-fish_y = 300
+fish_x = 46
+fish_y = 245
 # 玩家跳跃高度。
-jumpheight = 30
+jumpheight = 18
 # 玩家默认处于非跳跃动作。
 isjump = False
 
@@ -82,12 +82,12 @@ while gamerunning:
         # 玩家y轴方位的变化。
         fish_y -= jumpheight
         # 跳跃高度随着时间推移而减小。
-        jumpheight = jumpheight - 2
+        jumpheight = jumpheight - 1
         # 若玩家达到原本最低高度。
-        if fish_y == 300:
+        if fish_y >= 245:
                 # 玩家不再处于跳跃状态
                 isjump = False
-                jumpheight = 30
+                jumpheight = 18
         # creates time delay of 10ms
     print(fish_y)
     pygame.time.delay(10)
