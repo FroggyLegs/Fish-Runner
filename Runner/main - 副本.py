@@ -1,62 +1,73 @@
-# 导入所需数据。
+# Imports.
 import sys
 import pygame
 import random
+import PIL
 
-# 定义背景的长宽，及方位。
+# Width, height and position of window and background
 width = 1040
 height = 380
 i = 0
 
-# 生成背景及窗口
-window = pygame.display.set_mode((width,height))
-background = pygame.image.load("6.jpg").convert()
-background = pygame.transform.scale(background,(width, height))
+# Spawning window and background.
+win = pygame.display.set_mode((width,height))
+bg = pygame.image.load("6.jpg").convert()
+bg = pygame.transform.scale(bg,(width, height))
 
-# 窗口标题
+# Setting the title for the window.
 pygame.display.set_caption("Fish Runner")
 
-# 导入素材。
+# Importing images.
 obstacles = [pygame.image.load("2.png"), pygame.image.load("3.png"), pygame.image.load("4.png"),
              pygame.image.load("5.png")]
-fish = pygame.image.load("1.png")
+fish_sprite = pygame.image.load("1.png")
+shark_sprite = pygame.image.load("5.png")
+shark_sprite = pygame.transform.scale(shark_sprite, (400,400))
 gameover = pygame.image.load("7.png")
 
-# 计时器
+
+# Player.
+class player(object):
+    def __init__(self,x,y,width,height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.jumpheight = 18
+        self.isjump = False
+
+# Enemy.
+class enemy(object):
+    def __init__(self,width,height):
+        self.x = 980
+        self.y = random.randrange(2, 502, 20)
+        self.width = width
+        self.height = height
+# Fish.
+fish = player(46,245,88,88)
+# Shark.
+shark = enemy(1280, 720)
+# Timer.
 clock = pygame.time.Clock()
-
-# 玩家默认 (x,y) 坐标。
-fish_x = 46
-fish_y = 245
-# 玩家跳跃高度。
-jumpheight = 18
-# 玩家默认处于非跳跃动作。
-isjump = False
-
-# 游戏结束。
-def game_over():
-    pass
-
-#for obstacle in sprite.spritecollide(player, obstacle, 1):
-    #game_over()
-
+# Starts the loop.
 gamerunning = True
-# 游戏进行时。
 
+# Loop.
 while gamerunning:
     # 无图像地方自动填黑。
-    window.fill((0, 0, 0))
+    win.fill((0, 0, 0))
     # 每秒60帧的显示。
     clock.tick(60)
     # 显示并向右移动背景。
-    window.blit(background,(i,0))
-    window.blit(background,(width+i,0))
+    win.blit(bg,(i,0))
+    win.blit(bg,(width+i,0))
     if (i==-width):
-        window.blit(background,(width+i,0))
+        win.blit(bg,(width+i,0))
         i=0
     i-=10
     # 根据 (x,y) 坐标显示玩家。
-    window.blit(fish, (fish_x, fish_y))
+    win.blit(fish_sprite, (fish.x, fish.y))
+    win.blit(shark_sprite, (shark.x, shark.y))
     # 让程序查看用户输入。
     for event in pygame.event.get(): 
         # KEYUP 查看玩家是否松开任何按键。
@@ -67,30 +78,30 @@ while gamerunning:
         # 检测玩家是否按下按键。
         if event.type == pygame.KEYDOWN:
             # 若玩家不处于跳跃状态。
-            if not isjump:
+            if not fish.isjump:
                 # 按下空格键或者上方向键，触发跳跃状态。
                 if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
-                    isjump = True
+                    fish.isjump = True
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if not isjump:
+            if not fish.isjump:
                 if event.button == 1:
-                    isjump = True
+                    fish.isjump = True
         # 点击窗口右上端的 x 则退出游戏。
         if event.type == pygame.QUIT:
             sys.exit()
             gamerunning = False
     # 若玩家处于跳跃状态。
-    if isjump:
+    if fish.isjump:
         # 玩家y轴方位的变化。
-        fish_y -= jumpheight
+        fish.y -= fish.jumpheight
         # 跳跃高度随着时间推移而减小。
-        jumpheight = jumpheight - 1
+        fish.jumpheight = fish.jumpheight - 1
         # 若玩家达到原本最低高度。
-        if fish_y >= 245:
+        if fish.y >= 245:
                 # 玩家不再处于跳跃状态
-                isjump = False
-                jumpheight = 18
-    print(fish_y)
+                fish.isjump = False
+                fish.jumpheight = 18
+    print(fish.y)
     # creates time delay of 10ms
     pygame.time.delay(10)
     pygame.display.update()
@@ -136,7 +147,7 @@ class Obstacle(object):
                 self.walkCount = 0
 
 
-        obstacles.x = random.randrange(2, 502, 20)
-        obstacles.y = random.randrange(2, 502, 20)
-        background.blit("2.png", (obstacles.x, obstacles.y))
+        self.x = random.randrange(2, 502, 20)
+        self.y = random.randrange(2, 502, 20)
+        bg.blit("2.png", (obstacles.x, obstacles.y))
 
