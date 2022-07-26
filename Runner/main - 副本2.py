@@ -2,7 +2,6 @@
 import sys
 import pygame
 import random
-import PIL
 
 # Width, height and position of window and background
 width = 1040
@@ -41,6 +40,7 @@ class player(object):
         self.isjump = False
         self.isdive = False
 
+
 # Enemy.
 class enemy(object):
     def __init__(self,width,height):
@@ -50,44 +50,59 @@ class enemy(object):
         self.height = height
         self.velocity = 10
 
-def quit(event):
+def quit():
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_ESCAPE:
                 gamerunning = False
         if event.type == pygame.QUIT:
             gamerunning = False
 
-def jump(event):
-        if event.type == pygame.KEYDOWN:
-            if not fish.isjump:
-                if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+def jump():
+        if not fish.isjump:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_UP\
+                    or event.key == pygame.K_RIGHT:
                     fish.isjump = True
-            if not fish.isjump:
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        fish.isjump = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    fish.isjump = True
 
-def duck(event):
-        if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-            if fish.isjump:
+def duck():
+        if fish.isjump:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LSHIFT or event.key == pygame.K_DOWN\
-                    or event.button == 2:
+                    or event.key == pygame.K_LEFT:
+                    fish.fallspeed = fish.duck
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 3:
                     fish.fallspeed = fish.duck
 
-def dive(event):
-        if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONUP:
+def dive():
+        if event.type == pygame.KEYUP:
             if event.key == pygame.K_LSHIFT or event.key == pygame.K_DOWN\
-                or event.button == 2:
+                or event.key == pygame.K_LEFT:
                 fish.isdive = False
-        if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-            if fish.isjump:
-                if event.key == pygame.K_LSHIFT or event.key == pygame.K_DOWN \
-                    or event.button == 2:
+        if event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 2:
+                fish.isdive = False
+        if fish.isjump:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LSHIFT or event.key == pygame.K_DOWN\
+                    or event.key == pygame.K_LEFT:
                     fish.fallspeed = fish.duck
-            if not fish.isjump:
-                if event.key == pygame.K_LSHIFT or event.key == pygame.K_DOWN \
-                    or event.button == 2:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 3:
+                    fish.fallspeed = fish.duck
+        if not fish.isjump:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LSHIFT or event.key == pygame.K_DOWN\
+                    or event.key == pygame.K_LEFT:
                     fish.isdive = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 3:
+                    fish.fallspeed = fish.duck
+
+
 
 # Fish.
 fish = player(46,245,88,88)
@@ -118,10 +133,10 @@ while gamerunning:
     if shark.x == -width:
         pass
     for event in pygame.event.get():
-        jump(event)
-        duck(event)
-        dive(event)
-        quit(event)
+        jump()
+        duck()
+        dive()
+        quit()
     # 让程序查看用户输入。
     # 若玩家处于跳跃状态。
     if fish.isjump:
