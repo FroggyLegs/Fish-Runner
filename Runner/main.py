@@ -1,142 +1,56 @@
-# 导入所需数据。
 import sys
-import pygame
-import random
+from player_input import*
 
-# 定义背景的长宽，及方位。
 width = 1040
 height = 380
-i = 0
 
-# 生成背景及窗口
-window = pygame.display.set_mode((width,height))
-background = pygame.image.load("6.jpg").convert()
-background = pygame.transform.scale(background,(width, height))
+win = pygame.display.set_mode((width, height))
+bg = background()
+bg = pygame.transform.scale(bg, (width, height))
 
-# 窗口标题
-pygame.display.set_caption("Fish Runner")
-
-# 导入素材。
-obstacles = [pygame.image.load("2.png"), pygame.image.load("3.png"), pygame.image.load("4.png"),
-             pygame.image.load("5.png")]
-fish = pygame.image.load("1.png")
-gameover = pygame.image.load("7.png")
-
-# 计时器
 clock = pygame.time.Clock()
 
-# 玩家默认 (x,y) 坐标。
-fish_x = 46
-fish_y = 245
-# 玩家跳跃高度。
-jumpheight = 18
-# 玩家默认处于非跳跃动作。
-isjump = False
 
-# 游戏结束。
-def game_over():
-    pass
+class RunnerGame(object):
+    def __init__(self):
+        global width
+        global height
+        self.title = pygame.display.set_caption("Fish Runner")
+        self.screen = win.blit(bg,(0,0))
 
-#for obstacle in sprite.spritecollide(player, obstacle, 1):
-    #game_over()
+    def create_sprites(self):
+        self.player = Player()
+        self.enemy_group = pygame.sprite.Group()
+        shark = Enemy1()
+        self.enemy_group.add(shark)
 
-gamerunning = True
-# 游戏进行时。
-
-while gamerunning:
-    # 无图像地方自动填黑。
-    window.fill((0, 0, 0))
-    # 每秒60帧的显示。
-    clock.tick(60)
-    # 显示并向右移动背景。
-    window.blit(background,(i,0))
-    window.blit(background,(width+i,0))
-    if (i==-width):
-        window.blit(background,(width+i,0))
-        i=0
-    i-=10
-    # 根据 (x,y) 坐标显示玩家。
-    window.blit(fish, (fish_x, fish_y))
-    # 让程序查看用户输入。
-    for event in pygame.event.get(): 
-        # KEYUP 查看玩家是否松开任何按键。
-        if event.type == pygame.KEYUP:
-            # 松开 Esc 则退出游戏。
-            if event.key == pygame.K_ESCAPE:
-                gamerunning = False
-        # 检测玩家是否按下按键。
-        if event.type == pygame.KEYDOWN:
-            # 若玩家不处于跳跃状态。
-            if not isjump:
-                # 按下空格键或者上方向键，触发跳跃状态。
-                if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
-                    isjump = True
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if not isjump:
-                if event.button == 1:
-                    isjump = True
-        # 点击窗口右上端的 x 则退出游戏。
-        if event.type == pygame.QUIT:
-            sys.exit()
-            gamerunning = False
-    # 若玩家处于跳跃状态。
-    if isjump:
-        # 玩家y轴方位的变化。
-        fish_y -= jumpheight
-        # 跳跃高度随着时间推移而减小。
-        jumpheight = jumpheight - 1
-        # 若玩家达到原本最低高度。
-        if fish_y >= 245:
-                # 玩家不再处于跳跃状态
-                isjump = False
-                jumpheight = 18
-    print(fish_y)
-    # creates time delay of 10ms
-    pygame.time.delay(10)
-    pygame.display.update()
-
-#def Player(object):
-    pass
-
-class Obstacle(object):
-    # 定义障碍物类型物体的特征
-
-    def distance_square(a, b):
-        return (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - b.y)
-
-    def init_enemy(min_distance):
+    def game_start(self):
         while True:
-            object.x = random.randrange(2, 502, 20)
-            object.y = random.randrange(2, 502, 20)
-            if min_distance.distance_square(object, fish) > (min_distance * min_distance):
-                break
+            self.clock.tick(60)
+            self.event_handler()
+            self.check_collide()
+            self.display.update()
 
-    def __init__(self, x, y, width, height, end):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.path = [x, end]
-        self.walkCount = 0
-        self.vel = 3
-    def move(self):
-        if self.vel > 0:
-            if self.x < self.path[1] + self.vel:
-                self.x += self.vel
-            else:
-                self.vel = self.vel * -1
-                self.x += self.vel
-                self.walkCount = 0
-        else:
-            if self.x > self.path[0] - self.vel:
-                self.x += self.vel
-            else:
-                self.vel = self.vel * -1
-                self.x += self.vel
-                self.walkCount = 0
+    def event_handler(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                Runner.Game.game_over()
+            elif event.type == SPAWN_ENEMY:
+                shark = Enemy1()
+                self.enemy_group.add(shark)
+        keys_pressed = pygame.key.get_pressed()
+        if keys_pressed[pygame.K]:
+            pass
 
+    def check_collide(self):
+        enemies = pygame.sprite.groupcollide(self.player, self.enemy_group, True, False)
+        if len(enemies) > 0:
+            self.player.kill()
 
-        obstacles.x = random.randrange(2, 502, 20)
-        obstacles.y = random.randrange(2, 502, 20)
-        background.blit("2.png", (obstacles.x, obstacles.y))
+    def game_over(self):
+        pygame.quit()
+        exit()
 
+if __name__ == "__main__":
+    game = RunnerGame()
+    game.start_game()

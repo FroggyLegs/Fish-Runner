@@ -26,8 +26,11 @@ gameover = pygame.image.load("7.png")
 
 
 # Player.
-class player(object):
+class player(pygame.sprite.Sprite):
     def __init__(self,x,y,width,height):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("1.png")
+        self.rect = self.image.get_rect()
         self.x = x
         self.y = y
         self.width = width
@@ -42,8 +45,11 @@ class player(object):
 
 
 # Enemy.
-class enemy(object):
+class enemy(pygame.sprite.Sprite):
     def __init__(self,width,height):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("5.png")
+        self.rect = self.image.get_rect()
         self.x = 980
         self.y = random.randrange(30,260,40)
         self.width = width
@@ -51,6 +57,7 @@ class enemy(object):
         self.velocity = 10
 
 def quit():
+        global gamerunning
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_ESCAPE:
                 gamerunning = False
@@ -78,30 +85,21 @@ def duck():
                     fish.fallspeed = fish.duck
 
 def dive():
-        if event.type == pygame.KEYUP:
+        if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LSHIFT or event.key == pygame.K_DOWN\
                 or event.key == pygame.K_LEFT:
+                fish.isdive = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 3:
+                    fish.isdive = True
+def not_dive():
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LSHIFT or event.key == pygame.K_DOWN \
+                    or event.key == pygame.K_LEFT:
                 fish.isdive = False
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 2:
                 fish.isdive = False
-        if fish.isjump:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LSHIFT or event.key == pygame.K_DOWN\
-                    or event.key == pygame.K_LEFT:
-                    fish.fallspeed = fish.duck
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 3:
-                    fish.fallspeed = fish.duck
-        if not fish.isjump:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LSHIFT or event.key == pygame.K_DOWN\
-                    or event.key == pygame.K_LEFT:
-                    fish.isdive = True
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 3:
-                    fish.fallspeed = fish.duck
-
 
 
 # Fish.
@@ -112,6 +110,7 @@ shark = enemy(300, 300)
 clock = pygame.time.Clock()
 # Starts the loop.
 gamerunning = True
+
 
 # Loop.
 while gamerunning:
@@ -133,10 +132,14 @@ while gamerunning:
     if shark.x == -width:
         pass
     for event in pygame.event.get():
-        jump()
-        duck()
-        dive()
         quit()
+        if not fish.isjump:
+            jump()
+            dive()
+        if fish.isdive:
+            not_dive()
+        if fish.isjump:
+            duck()
     # 让程序查看用户输入。
     # 若玩家处于跳跃状态。
     if fish.isjump:
@@ -210,4 +213,5 @@ class Obstacle(object):
         self.x = random.randrange(2, 502, 20)
         self.y = random.randrange(2, 502, 20)
         bg.blit("2.png", (obstacles.x, obstacles.y))
+
 
